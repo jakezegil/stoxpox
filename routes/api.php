@@ -13,11 +13,15 @@ use Illuminate\Http\Request;
 |
 */
 
+Route::get('open', function () { 
+    return response()->json(['nice!']); //use this baby for unauthenticated testing, ensure the api is working
+});
 Route::post('login', 'PassportController@login');
 Route::post('register', 'PassportController@register');
  
 Route::middleware('auth:api')->group(function () {
     Route::get('user', 'PassportController@details');
- 
-    Route::resource('products', 'ProductController');
+    Route::get('products', 'ProductController@index');
+    Route::post('products', 'ProductController@store');
+    //Route::patch('products', 'ProductController@update');
 });

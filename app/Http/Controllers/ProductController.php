@@ -9,7 +9,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = auth()->user()->products;
+        $products = \DB::select('Select * from products');
  
         return response()->json([
             'success' => true,
@@ -37,7 +37,7 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'name' => 'required',
+            'name' => 'required|unique:products',
             'price' => 'required|integer'
         ]);
  
@@ -64,7 +64,7 @@ class ProductController extends Controller
         if (!$product) {
             return response()->json([
                 'success' => false,
-                'message' => 'Product with id ' . $id . ' not found'
+                'message' =>  $id . ' not found'
             ], 400);
         }
  
