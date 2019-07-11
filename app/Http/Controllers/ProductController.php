@@ -9,7 +9,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = \DB::select('Select * from products');
+        $products = Product::all();
  
         return response()->json([
             'success' => true,
@@ -17,9 +17,9 @@ class ProductController extends Controller
         ]);
     }
  
-    public function show($id)
+    public function show($name)
     {
-        $product = auth()->user()->products()->find($id);
+        $product = null;//work in progress
  
         if (!$product) {
             return response()->json([
@@ -38,12 +38,18 @@ class ProductController extends Controller
     {
         $this->validate($request, [
             'name' => 'required|unique:products',
-            'price' => 'required|integer'
+            'price' => 'required|numeric',
+            'stock_count' => 'nullable|integer'
         ]);
  
         $product = new Product();
         $product->name = $request->name;
         $product->price = $request->price;
+        if(!!$request->stock_count){
+            $product->stock_count = $request->stock_count;
+        } else {
+            $product->stock_count = 100;
+        }
  
         if (auth()->user()->products()->save($product))
             return response()->json([
@@ -57,14 +63,17 @@ class ProductController extends Controller
             ], 500);
     }
  
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
-        $product = auth()->user()->products()->find($id);
+
+        $name = $request->name;
+        
+        $product = auth()->user()->products()->whereName($name)->first();
  
         if (!$product) {
             return response()->json([
                 'success' => false,
-                'message' =>  $id . ' not found'
+                'message' => 'Product ' . $name . ' not found'
             ], 400);
         }
  
@@ -81,14 +90,14 @@ class ProductController extends Controller
             ], 500);
     }
  
-    public function destroy($id)
+    public function destroy($name)
     {
-        $product = auth()->user()->products()->find($id);
+        $product = auth()->user()->products()->find($name);
  
         if (!$product) {
             return response()->json([
                 'success' => false,
-                'message' => 'Product with id ' . $id . ' not found'
+                'message' => 'Product ' . $name . ' not found'
             ], 400);
         }
  

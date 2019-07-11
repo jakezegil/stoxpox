@@ -20,8 +20,9 @@ Route::post('login', 'PassportController@login');
 Route::post('register', 'PassportController@register');
  
 Route::middleware('auth:api')->group(function () {
-    Route::get('user', 'PassportController@details');
-    Route::get('products', 'ProductController@index');
-    Route::post('products', 'ProductController@store');
-    //Route::patch('products', 'ProductController@update');
+    Route::  get('user', 'PassportController@details');
+    Route::  get('products', 'ProductController@index');
+    Route:: post('products', 'ProductController@store');
+    Route::patch('products', 'ProductController@update');
+   // Route::  get('inventory', '')
 });
