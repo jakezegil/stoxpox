@@ -15,6 +15,10 @@ class User extends Authenticatable
         return $this->hasMany(Product::class);
     }
 
+    public function inventory() {
+        return $this->hasMany(Inventory::class);
+    }
+
     /**
      * The attributes that are mass assignable.
      *

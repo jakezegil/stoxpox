@@ -16,6 +16,42 @@ class ProductController extends Controller
             'data' => $products
         ]);
     }
+
+    public function myProducts()
+    {
+        $products = auth()->user()->products()->get();
+ 
+        return response()->json([
+            'success' => true,
+            'data' => $products
+        ]);
+    }
+
+    public function stocklist()
+    {
+        $products = \DB::table('products as p')
+        ->leftJoin('users as u', 'p.user_id', '=', 'u.id')
+        ->select('p.id as id', 'u.name as user_name', 'email', 'p.name as product_name', 'stock_count', 'price')
+        ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $products
+        ]);
+    }
+
+    public function mystocklist()
+    {
+        $products = auth()->user()->products()
+        ->leftJoin('users as u', 'products.user_id', '=', 'u.id')
+        ->select('products.id as id', 'u.name as user_name', 'email', 'products.name as product_name', 'stock_count', 'price')
+        ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $products
+        ]);
+    }
  
     public function show($name)
     {
@@ -38,8 +74,8 @@ class ProductController extends Controller
     {
         $this->validate($request, [
             'name' => 'required|unique:products',
-            'price' => 'required|numeric',
-            'stock_count' => 'nullable|integer'
+            'price' => 'required|numeric|min:0',
+            'stock_count' => 'nullable|integer|min:0'
         ]);
  
         $product = new Product();
